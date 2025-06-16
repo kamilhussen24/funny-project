@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Download, User, Share2 } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { User, Share2, Github } from 'lucide-react';
 import PortfolioCard from './components/PortfolioCard';
 
 function App() {
@@ -19,8 +18,41 @@ function App() {
     if (sharedName) {
       setName(sharedName);
       setShowPortfolio(true);
+      updateMetaTags(sharedName);
     }
   }, [sharedName]);
+
+  const updateMetaTags = (portfolioName: string) => {
+    const title = `${portfolioName}'s Digital Portfolio`;
+    const description = `Check out ${portfolioName}'s professional digital portfolio with skills, experience, and contact information.`;
+    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400';
+    const currentUrl = window.location.href;
+
+    // Update document title
+    document.title = title;
+
+    // Update meta tags
+    const updateMetaTag = (id: string, content: string) => {
+      const element = document.getElementById(id);
+      if (element) {
+        if (element.hasAttribute('content')) {
+          element.setAttribute('content', content);
+        } else if (element.hasAttribute('property')) {
+          element.setAttribute('content', content);
+        }
+      }
+    };
+
+    updateMetaTag('dynamic-title', title);
+    updateMetaTag('dynamic-description', description);
+    updateMetaTag('dynamic-og-title', title);
+    updateMetaTag('dynamic-og-description', description);
+    updateMetaTag('dynamic-og-image', imageUrl);
+    updateMetaTag('dynamic-og-url', currentUrl);
+    updateMetaTag('dynamic-twitter-title', title);
+    updateMetaTag('dynamic-twitter-description', description);
+    updateMetaTag('dynamic-twitter-image', imageUrl);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,37 +67,8 @@ function App() {
       // Generate shareable URL
       const shareUrl = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(name)}`;
       setPortfolioUrl(shareUrl);
+      updateMetaTags(name);
     }, 2500);
-  };
-
-  const downloadPortfolio = async () => {
-    if (!portfolioRef.current) return;
-
-    try {
-      // Wait a bit for any animations to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      const canvas = await html2canvas(portfolioRef.current, {
-        scale: 3, // Higher scale for better quality
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        allowTaint: false,
-        foreignObjectRendering: false,
-        logging: false,
-        width: portfolioRef.current.scrollWidth,
-        height: portfolioRef.current.scrollHeight,
-        windowWidth: portfolioRef.current.scrollWidth,
-        windowHeight: portfolioRef.current.scrollHeight,
-      });
-
-      const link = document.createElement('a');
-      link.download = `${name}-portfolio.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      link.click();
-    } catch (error) {
-      console.error('Error generating image:', error);
-      alert('Error downloading image. Please try again.');
-    }
   };
 
   const sharePortfolio = async () => {
@@ -107,8 +110,22 @@ function App() {
     setName('');
     setShowPortfolio(false);
     setPortfolioUrl('');
-    // Clear URL parameters
+    // Clear URL parameters and reset meta tags
     window.history.replaceState({}, document.title, window.location.pathname);
+    
+    // Reset meta tags to default
+    document.title = 'Portfolio Generator - Create Professional Portfolios Instantly';
+    const updateMetaTag = (id: string, content: string) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.setAttribute('content', content);
+      }
+    };
+    
+    updateMetaTag('dynamic-title', 'Portfolio Generator - Create Professional Portfolios Instantly');
+    updateMetaTag('dynamic-description', 'Generate beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    updateMetaTag('dynamic-og-title', 'Portfolio Generator - Create Professional Portfolios Instantly');
+    updateMetaTag('dynamic-og-description', 'Generate beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
   };
 
   return (
@@ -180,25 +197,20 @@ function App() {
               </h2>
               <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <button
-                  onClick={downloadPortfolio}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
-                >
-                  <Download className="w-5 h-5" />
-                  Download as Image
-                </button>
-                <button
                   onClick={sharePortfolio}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
                 >
                   <Share2 className="w-5 h-5" />
-                  Share
+                  Share Portfolio
                 </button>
-                <button
-                  onClick={resetForm}
-                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition-colors duration-200"
-                >
-                  Create New Portfolio
-                </button>
+                {!isViewingShared && (
+                  <button
+                    onClick={resetForm}
+                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition-colors duration-200"
+                  >
+                    Create New Portfolio
+                  </button>
+                )}
               </div>
             </div>
 
@@ -208,8 +220,17 @@ function App() {
 
         {/* Footer */}
         <footer className="mt-12 sm:mt-16 text-center">
-          <p className="text-gray-600 text-sm">
-            Design by <span className="font-semibold">Kamil Dex</span>
+          <p className="text-gray-600 text-sm flex items-center justify-center gap-2">
+            Design by 
+            <a 
+              href="https://github.com/kamilhussen24" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1 transition-colors duration-200"
+            >
+              <Github className="w-4 h-4" />
+              Kamil Dex
+            </a>
           </p>
         </footer>
       </div>
