@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Download, User, Share2, Github } from 'lucide-react';
+import { Download, User, Share2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import PortfolioCard from './components/PortfolioCard';
 
@@ -19,43 +19,8 @@ function App() {
     if (sharedName) {
       setName(sharedName);
       setShowPortfolio(true);
-      updateMetaTags(sharedName);
     }
   }, [sharedName]);
-
-  const updateMetaTags = (portfolioName: string) => {
-    // Update page title
-    document.title = `${portfolioName}'s Digital Portfolio - Portfolio Generator`;
-    
-    // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', `View ${portfolioName}'s professional digital portfolio. Skills, experience, and contact information all in one place.`);
-    }
-
-    // Update or create Open Graph meta tags
-    updateOrCreateMetaTag('property', 'og:title', `${portfolioName}'s Digital Portfolio`);
-    updateOrCreateMetaTag('property', 'og:description', `Check out ${portfolioName}'s professional portfolio with skills, experience, and contact information.`);
-    updateOrCreateMetaTag('property', 'og:type', 'profile');
-    updateOrCreateMetaTag('property', 'og:url', window.location.href);
-    updateOrCreateMetaTag('property', 'og:image', 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400');
-    
-    // Update Twitter Card meta tags
-    updateOrCreateMetaTag('name', 'twitter:card', 'summary_large_image');
-    updateOrCreateMetaTag('name', 'twitter:title', `${portfolioName}'s Digital Portfolio`);
-    updateOrCreateMetaTag('name', 'twitter:description', `Check out ${portfolioName}'s professional portfolio`);
-    updateOrCreateMetaTag('name', 'twitter:image', 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400');
-  };
-
-  const updateOrCreateMetaTag = (attributeName: string, attributeValue: string, content: string) => {
-    let metaTag = document.querySelector(`meta[${attributeName}="${attributeValue}"]`);
-    if (!metaTag) {
-      metaTag = document.createElement('meta');
-      metaTag.setAttribute(attributeName, attributeValue);
-      document.head.appendChild(metaTag);
-    }
-    metaTag.setAttribute('content', content);
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +35,6 @@ function App() {
       // Generate shareable URL
       const shareUrl = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(name)}`;
       setPortfolioUrl(shareUrl);
-      updateMetaTags(name);
     }, 2500);
   };
 
@@ -79,46 +43,20 @@ function App() {
 
     try {
       // Wait a bit for any animations to complete
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Get the portfolio card element
-      const portfolioElement = portfolioRef.current;
-      
-      // Temporarily set a fixed width for consistent rendering
-      const originalWidth = portfolioElement.style.width;
-      portfolioElement.style.width = '800px';
-      
-      const canvas = await html2canvas(portfolioElement, {
-        scale: 4, // Higher scale for better quality
+      const canvas = await html2canvas(portfolioRef.current, {
+        scale: 3, // Higher scale for better quality
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: false,
         foreignObjectRendering: false,
         logging: false,
-        width: 800,
-        height: portfolioElement.scrollHeight,
-        windowWidth: 1200,
-        windowHeight: 800,
-        onclone: (clonedDoc) => {
-          // Ensure fonts are loaded in the cloned document
-          const clonedElement = clonedDoc.querySelector('#portfolio-card') as HTMLElement;
-          if (clonedElement) {
-            clonedElement.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-            clonedElement.style.width = '800px';
-            
-            // Ensure all text elements have proper font settings
-            const textElements = clonedElement.querySelectorAll('*');
-            textElements.forEach((el: any) => {
-              if (el.style) {
-                el.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-              }
-            });
-          }
-        }
+        width: portfolioRef.current.scrollWidth,
+        height: portfolioRef.current.scrollHeight,
+        windowWidth: portfolioRef.current.scrollWidth,
+        windowHeight: portfolioRef.current.scrollHeight,
       });
-
-      // Restore original width
-      portfolioElement.style.width = originalWidth;
 
       const link = document.createElement('a');
       link.download = `${name}-portfolio.png`;
@@ -169,13 +107,8 @@ function App() {
     setName('');
     setShowPortfolio(false);
     setPortfolioUrl('');
-    // Clear URL parameters and reset meta tags
+    // Clear URL parameters
     window.history.replaceState({}, document.title, window.location.pathname);
-    document.title = 'Portfolio Generator - Create Professional Portfolios Instantly';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Generate beautiful professional portfolios instantly. Just enter your name and download as an image.');
-    }
   };
 
   return (
@@ -275,17 +208,8 @@ function App() {
 
         {/* Footer */}
         <footer className="mt-12 sm:mt-16 text-center">
-          <p className="text-gray-600 text-sm flex items-center justify-center gap-2">
-            Design by 
-            <a 
-              href="https://github.com/kamilhussen24" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200 flex items-center gap-1"
-            >
-              <Github className="w-4 h-4" />
-              Kamil Dex
-            </a>
+          <p className="text-gray-600 text-sm">
+            Design by <span className="font-semibold">Kamil Dex</span>
           </p>
         </footer>
       </div>
