@@ -5,7 +5,7 @@ interface PortfolioCardProps {
 }
 
 const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ name }, ref) => {
-  const skills = ['Doctor', 'Teacher', 'Police', 'Engineer', 'Astronaut', 'Army', 'Delivery Boy', 'A Cop'];
+  const skills = ['Doctor', 'Teacher', 'Police', 'Engineer', 'Astronaut', 'Army', 'Delivery Boy', 'A Cop', 'Gamer'];
   const nextDatePeople = ['John Smith', 'Sarah Johnson', 'Michael Brown', 'Emily Davis'];
 
   return (

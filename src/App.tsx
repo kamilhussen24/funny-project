@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { User, Share2, Github } from 'lucide-react';
+import { User, Share2, Github, Plus } from 'lucide-react';
 import PortfolioCard from './components/PortfolioCard';
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
   }, [sharedName]);
 
   const updateMetaTags = (portfolioName: string) => {
-    const title = `${portfolioName}'s Digital Portfolio`;
+    const title = `${portfolioName} | Digital Portfolio`;
     const description = `Check out ${portfolioName}'s professional digital portfolio with skills, experience, and contact information.`;
     const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400';
     const currentUrl = window.location.href;
@@ -77,7 +77,7 @@ function App() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${name}'s Digital Portfolio`,
+          title: `${name} | Digital Portfolio`,
           text: `Check out ${name}'s professional portfolio`,
           url: shareUrl,
         });
@@ -114,7 +114,7 @@ function App() {
     window.history.replaceState({}, document.title, window.location.pathname);
     
     // Reset meta tags to default
-    document.title = 'Portfolio Generator - Create Professional Portfolios Instantly';
+    document.title = 'Digital Portfolio Maker';
     const updateMetaTag = (id: string, content: string) => {
       const element = document.getElementById(id);
       if (element) {
@@ -122,10 +122,10 @@ function App() {
       }
     };
     
-    updateMetaTag('dynamic-title', 'Portfolio Generator - Create Professional Portfolios Instantly');
-    updateMetaTag('dynamic-description', 'Generate beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
-    updateMetaTag('dynamic-og-title', 'Portfolio Generator - Create Professional Portfolios Instantly');
-    updateMetaTag('dynamic-og-description', 'Generate beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    updateMetaTag('dynamic-title', 'Digital Portfolio Maker');
+    updateMetaTag('dynamic-description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    updateMetaTag('dynamic-og-title', 'Digital Portfolio Maker');
+    updateMetaTag('dynamic-og-description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
   };
 
   return (
@@ -134,7 +134,7 @@ function App() {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
-            Portfolio Generator
+            Digital Portfolio Maker
           </h1>
           <p className="text-base sm:text-lg text-gray-600">
             Enter your name and get a beautiful portfolio instantly
@@ -203,7 +203,15 @@ function App() {
                   <Share2 className="w-5 h-5" />
                   Share Portfolio
                 </button>
-                {!isViewingShared && (
+                {isViewingShared ? (
+                  <button
+                    onClick={resetForm}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Create New Portfolio
+                  </button>
+                ) : (
                   <button
                     onClick={resetForm}
                     className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition-colors duration-200"
