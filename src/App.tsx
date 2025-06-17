@@ -28,62 +28,58 @@ function App() {
   const updateMetaTags = (portfolioName: string) => {
     const title = `${portfolioName} | Digital Portfolio`;
     const description = `Check out ${portfolioName}'s professional digital portfolio with skills, experience, and contact information.`;
-    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1200';
+    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630';
     const currentUrl = window.location.href;
 
-    // Update document title
+    // Update document title immediately
     document.title = title;
 
-    // Function to update or create meta tags
-    const setMetaTag = (property: string, content: string, isProperty = false) => {
-      const selector = isProperty ? `meta[property="${property}"]` : `meta[name="${property}"]`;
-      let element = document.querySelector(selector) as HTMLMetaElement;
-      
-      if (!element) {
-        element = document.createElement('meta');
-        if (isProperty) {
-          element.setAttribute('property', property);
-        } else {
-          element.setAttribute('name', property);
-        }
-        document.head.appendChild(element);
-      }
-      element.setAttribute('content', content);
+    // Function to update meta tags more aggressively
+    const updateMetaTag = (selector: string, content: string, attribute: string = 'content') => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        element.setAttribute(attribute, content);
+      });
     };
 
-    // Update all meta tags
-    setMetaTag('description', description);
-    
-    // Open Graph tags
-    setMetaTag('og:title', title, true);
-    setMetaTag('og:description', description, true);
-    setMetaTag('og:image', imageUrl, true);
-    setMetaTag('og:url', currentUrl, true);
-    setMetaTag('og:type', 'website', true);
-    
-    // Twitter Card tags
-    setMetaTag('twitter:card', 'summary_large_image');
-    setMetaTag('twitter:title', title);
-    setMetaTag('twitter:description', description);
-    setMetaTag('twitter:image', imageUrl);
+    // Update all possible meta tag variations
+    updateMetaTag('meta[name="description"], #dynamic-description', description);
+    updateMetaTag('meta[property="og:title"], #dynamic-og-title', title);
+    updateMetaTag('meta[property="og:description"], #dynamic-og-description', description);
+    updateMetaTag('meta[property="og:image"], #dynamic-og-image', imageUrl);
+    updateMetaTag('meta[property="og:url"], #dynamic-og-url', currentUrl);
+    updateMetaTag('meta[name="twitter:title"], #dynamic-twitter-title', title);
+    updateMetaTag('meta[name="twitter:description"], #dynamic-twitter-description', description);
+    updateMetaTag('meta[name="twitter:image"], #dynamic-twitter-image', imageUrl);
 
-    // Also update existing meta tags with IDs if they exist
-    const updateExistingMetaTag = (id: string, content: string) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.setAttribute('content', content);
+    // Update structured data
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": portfolioName,
+      "description": description,
+      "image": imageUrl,
+      "url": currentUrl,
+      "jobTitle": "Professional",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Digital Portfolio"
       }
     };
 
-    updateExistingMetaTag('dynamic-title', title);
-    updateExistingMetaTag('dynamic-description', description);
-    updateExistingMetaTag('dynamic-og-title', title);
-    updateExistingMetaTag('dynamic-og-description', description);
-    updateExistingMetaTag('dynamic-og-image', imageUrl);
-    updateExistingMetaTag('dynamic-og-url', currentUrl);
-    updateExistingMetaTag('dynamic-twitter-title', title);
-    updateExistingMetaTag('dynamic-twitter-description', description);
-    updateExistingMetaTag('dynamic-twitter-image', imageUrl);
+    const scriptElement = document.getElementById('structured-data');
+    if (scriptElement) {
+      scriptElement.textContent = JSON.stringify(structuredData);
+    }
+
+    // Force a small delay and try to trigger social media crawlers to re-read
+    setTimeout(() => {
+      // Create a temporary meta tag refresh hint
+      const refreshMeta = document.createElement('meta');
+      refreshMeta.setAttribute('property', 'og:updated_time');
+      refreshMeta.setAttribute('content', new Date().toISOString());
+      document.head.appendChild(refreshMeta);
+    }, 100);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -125,7 +121,7 @@ function App() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Portfolio link copied to clipboard! Share this link on social media to show the personalized preview.');
+      alert(`Portfolio link copied! 📋\n\n⚠️ Note: For social media sharing (Facebook, WhatsApp, etc.) to show "${name} | Digital Portfolio" instead of the main title, the link needs to be processed by their servers first. This may take a few minutes after first sharing.`);
     }).catch(() => {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -134,7 +130,7 @@ function App() {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert('Portfolio link copied to clipboard! Share this link on social media to show the personalized preview.');
+      alert(`Portfolio link copied! 📋\n\n⚠️ Note: For social media sharing (Facebook, WhatsApp, etc.) to show "${name} | Digital Portfolio" instead of the main title, the link needs to be processed by their servers first. This may take a few minutes after first sharing.`);
     });
   };
 
@@ -148,19 +144,35 @@ function App() {
     // Reset meta tags to default
     document.title = 'Digital Portfolio Maker';
     
-    const resetMetaTag = (property: string, content: string, isProperty = false) => {
-      const selector = isProperty ? `meta[property="${property}"]` : `meta[name="${property}"]`;
-      const element = document.querySelector(selector) as HTMLMetaElement;
-      if (element) {
+    const resetMetaTag = (selector: string, content: string) => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
         element.setAttribute('content', content);
-      }
+      });
     };
     
-    resetMetaTag('description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
-    resetMetaTag('og:title', 'Digital Portfolio Maker', true);
-    resetMetaTag('og:description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.', true);
-    resetMetaTag('twitter:title', 'Digital Portfolio Maker');
-    resetMetaTag('twitter:description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    const defaultDescription = 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.';
+    resetMetaTag('meta[name="description"], #dynamic-description', defaultDescription);
+    resetMetaTag('meta[property="og:title"], #dynamic-og-title', 'Digital Portfolio Maker');
+    resetMetaTag('meta[property="og:description"], #dynamic-og-description', defaultDescription);
+    resetMetaTag('meta[name="twitter:title"], #dynamic-twitter-title', 'Digital Portfolio Maker');
+    resetMetaTag('meta[name="twitter:description"], #dynamic-twitter-description', defaultDescription);
+
+    // Reset structured data
+    const defaultStructuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Digital Portfolio Maker",
+      "description": defaultDescription,
+      "url": window.location.origin,
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser"
+    };
+
+    const scriptElement = document.getElementById('structured-data');
+    if (scriptElement) {
+      scriptElement.textContent = JSON.stringify(defaultStructuredData);
+    }
   };
 
   return (
