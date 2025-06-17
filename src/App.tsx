@@ -19,39 +19,71 @@ function App() {
       setName(sharedName);
       setShowPortfolio(true);
       updateMetaTags(sharedName);
+      // Update URL without the query parameter for cleaner sharing
+      const newUrl = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(sharedName)}`;
+      window.history.replaceState({}, '', newUrl);
     }
   }, [sharedName]);
 
   const updateMetaTags = (portfolioName: string) => {
     const title = `${portfolioName} | Digital Portfolio`;
     const description = `Check out ${portfolioName}'s professional digital portfolio with skills, experience, and contact information.`;
-    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400';
+    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1200';
     const currentUrl = window.location.href;
 
     // Update document title
     document.title = title;
 
-    // Update meta tags
-    const updateMetaTag = (id: string, content: string) => {
+    // Function to update or create meta tags
+    const setMetaTag = (property: string, content: string, isProperty = false) => {
+      const selector = isProperty ? `meta[property="${property}"]` : `meta[name="${property}"]`;
+      let element = document.querySelector(selector) as HTMLMetaElement;
+      
+      if (!element) {
+        element = document.createElement('meta');
+        if (isProperty) {
+          element.setAttribute('property', property);
+        } else {
+          element.setAttribute('name', property);
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Update all meta tags
+    setMetaTag('description', description);
+    
+    // Open Graph tags
+    setMetaTag('og:title', title, true);
+    setMetaTag('og:description', description, true);
+    setMetaTag('og:image', imageUrl, true);
+    setMetaTag('og:url', currentUrl, true);
+    setMetaTag('og:type', 'website', true);
+    
+    // Twitter Card tags
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', title);
+    setMetaTag('twitter:description', description);
+    setMetaTag('twitter:image', imageUrl);
+
+    // Also update existing meta tags with IDs if they exist
+    const updateExistingMetaTag = (id: string, content: string) => {
       const element = document.getElementById(id);
       if (element) {
-        if (element.hasAttribute('content')) {
-          element.setAttribute('content', content);
-        } else if (element.hasAttribute('property')) {
-          element.setAttribute('content', content);
-        }
+        element.setAttribute('content', content);
       }
     };
 
-    updateMetaTag('dynamic-title', title);
-    updateMetaTag('dynamic-description', description);
-    updateMetaTag('dynamic-og-title', title);
-    updateMetaTag('dynamic-og-description', description);
-    updateMetaTag('dynamic-og-image', imageUrl);
-    updateMetaTag('dynamic-og-url', currentUrl);
-    updateMetaTag('dynamic-twitter-title', title);
-    updateMetaTag('dynamic-twitter-description', description);
-    updateMetaTag('dynamic-twitter-image', imageUrl);
+    updateExistingMetaTag('dynamic-title', title);
+    updateExistingMetaTag('dynamic-description', description);
+    updateExistingMetaTag('dynamic-og-title', title);
+    updateExistingMetaTag('dynamic-og-description', description);
+    updateExistingMetaTag('dynamic-og-image', imageUrl);
+    updateExistingMetaTag('dynamic-og-url', currentUrl);
+    updateExistingMetaTag('dynamic-twitter-title', title);
+    updateExistingMetaTag('dynamic-twitter-description', description);
+    updateExistingMetaTag('dynamic-twitter-image', imageUrl);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,7 +125,7 @@ function App() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Portfolio link copied to clipboard!');
+      alert('Portfolio link copied to clipboard! Share this link on social media to show the personalized preview.');
     }).catch(() => {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -102,7 +134,7 @@ function App() {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert('Portfolio link copied to clipboard!');
+      alert('Portfolio link copied to clipboard! Share this link on social media to show the personalized preview.');
     });
   };
 
@@ -111,21 +143,24 @@ function App() {
     setShowPortfolio(false);
     setPortfolioUrl('');
     // Clear URL parameters and reset meta tags
-    window.history.replaceState({}, document.title, window.location.pathname);
+    window.history.replaceState({}, '', window.location.pathname);
     
     // Reset meta tags to default
     document.title = 'Digital Portfolio Maker';
-    const updateMetaTag = (id: string, content: string) => {
-      const element = document.getElementById(id);
+    
+    const resetMetaTag = (property: string, content: string, isProperty = false) => {
+      const selector = isProperty ? `meta[property="${property}"]` : `meta[name="${property}"]`;
+      const element = document.querySelector(selector) as HTMLMetaElement;
       if (element) {
         element.setAttribute('content', content);
       }
     };
     
-    updateMetaTag('dynamic-title', 'Digital Portfolio Maker');
-    updateMetaTag('dynamic-description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
-    updateMetaTag('dynamic-og-title', 'Digital Portfolio Maker');
-    updateMetaTag('dynamic-og-description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    resetMetaTag('description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
+    resetMetaTag('og:title', 'Digital Portfolio Maker', true);
+    resetMetaTag('og:description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.', true);
+    resetMetaTag('twitter:title', 'Digital Portfolio Maker');
+    resetMetaTag('twitter:description', 'Create beautiful professional portfolios instantly. Just enter your name and share your portfolio link.');
   };
 
   return (
