@@ -17,7 +17,7 @@ const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ na
         {/* Profile Image */}
         <div className="mb-6">
           <img
-            src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+            src="https://raw.githubusercontent.com/kamilhussen24/funny-project/refs/heads/main/dist/assets/Image/profile.jpg?auto=compress&cs=tinysrgb&w=400"
             alt={name}
             className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-lg object-cover mx-auto"
             crossOrigin="anonymous"
@@ -31,7 +31,7 @@ const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ na
       <div className="p-6 sm:p-8 space-y-8">
         {/* Skills & Expertise */}
         <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Skills & Expertise:</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Skills & Expertise</h3>
           <div className="flex flex-wrap gap-2 sm:gap-3">
             {skills.map((skill, index) => (
               <span
@@ -51,8 +51,8 @@ const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ na
 
         {/* Long Time Working */}
         <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Long Time Working:</h3>
-          <p className="text-lg sm:text-xl font-semibold" style={{ color: '#0369a1' }}>4 h+</p>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Long Time Work Record</h3>
+          <p className="text-lg sm:text-xl font-semibold" style={{ color: '#0369a1' }}>4 Hours+</p>
         </div>
 
         {/* Next Date */}

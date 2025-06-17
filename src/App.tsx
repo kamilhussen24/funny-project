@@ -27,8 +27,7 @@ function App() {
 
   const updateMetaTags = (portfolioName: string) => {
     const title = `${portfolioName} | Digital Portfolio`;
-    const description = `Check out ${portfolioName}'s professional digital portfolio with skills, experience, and contact information.`;
-    const imageUrl = 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630';
+    const description = `Check out ${portfolioName}'s professional digital portfolio with skills, https://raw.githubusercontent.com/kamilhussen24/funny-project/refs/heads/main/dist/assets/Image/profile.jpg?auto=compress&cs=tinysrgb&w=1200&h=630';
     const currentUrl = window.location.href;
 
     // Update document title immediately
