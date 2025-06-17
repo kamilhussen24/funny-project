@@ -6,7 +6,7 @@ interface PortfolioCardProps {
 
 const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ name }, ref) => {
   const skills = ['Doctor', 'Teacher', 'Police', 'Engineer', 'Astronaut', 'Army', 'Delivery Boy', 'A Cop', 'Gamer'];
-  const nextDatePeople = ['John Smith', 'Sarah Johnson', 'Michael Brown', 'Emily Davis'];
+  const nextDatePeople = ['Mia Khalifa', 'Ruth Chavarri', 'Jia Lissa', 'Leah Gotti'];
 
   return (
     <div ref={ref} id="portfolio-card" className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-2xl w-full mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -57,7 +57,7 @@ const PortfolioCard = React.forwardRef<HTMLDivElement, PortfolioCardProps>(({ na
 
         {/* Next Date */}
         <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Next Date:</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Next Meet</h3>
           <div className="space-y-2">
             {nextDatePeople.map((person, index) => (
               <div key={index} className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
